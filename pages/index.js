@@ -4,17 +4,20 @@ import Layout, { siteTitle } from "../components/layout";
 import Date from "../components/date";
 import utilStyles from "../styles/utils.module.css";
 import { getSortedPostsData } from "../lib/posts";
+import { getSortedProductsData } from "../lib/products";
 
 export async function getStaticProps() {
   const allPostsData = getSortedPostsData();
+  const allProductsData = getSortedProductsData();
   return {
     props: {
       allPostsData,
+      allProductsData,
     },
   };
 }
 
-export default function Home({ allPostsData }) {
+export default function Home({ allPostsData, allProductsData }) {
   return (
     <Layout home>
       <Head>
@@ -38,6 +41,19 @@ export default function Home({ allPostsData }) {
               <small className={utilStyles.lightText}>
                 <Date dateString={date} />
               </small>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
+        <h2 className={utilStyles.headingLg}>Shop</h2>
+        <ul className={utilStyles.list}>
+          {allProductsData.map(({ id, title, price }) => (
+            <li className={utilStyles.listItem} key={id}>
+              <Link href={`/products/${id}`}>{title}</Link>
+              <br />
+              <small className={utilStyles.lightText}>${price}</small>
             </li>
           ))}
         </ul>
