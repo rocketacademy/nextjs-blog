@@ -1,12 +1,11 @@
 import Head from "next/head";
 import Image from "next/image";
-import Date from "../../components/date";
 import Layout from "../../components/layout";
-import { getAllProductIds, getProductData } from "../../lib/products";
 import utilStyles from "../../styles/utils.module.css";
 
 export async function getStaticProps({ params }) {
-  const productData = await getProductData(params.id);
+  const product = await fetch(`https://fakestoreapi.com/products/${params.id}`);
+  const productData = await product.json();
   return {
     props: {
       productData,
@@ -15,7 +14,16 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths() {
-  const paths = getAllProductIds();
+  const res = await fetch("https://fakestoreapi.com/products");
+  const products = await res.json();
+  // We must return paths in this specific format
+  const paths = products.map((product) => {
+    return {
+      params: {
+        id: product.id.toString(),
+      },
+    };
+  });
   return {
     paths,
     fallback: false,
@@ -35,10 +43,11 @@ export default function Product({ productData }) {
           width={500}
           height={500}
           alt={productData.title}
-          style={{ width: "100%", height: "auto" }}
+          style={{ width: "auto", height: "500px" }}
         />
+        <br />
         <div className={utilStyles.lightText}>${productData.price}</div>
-        <div dangerouslySetInnerHTML={{ __html: productData.contentHtml }} />
+        <div dangerouslySetInnerHTML={{ __html: productData.description }} />
       </article>
     </Layout>
   );

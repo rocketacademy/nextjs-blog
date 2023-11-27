@@ -4,11 +4,11 @@ import Layout, { siteTitle } from "../components/layout";
 import Date from "../components/date";
 import utilStyles from "../styles/utils.module.css";
 import { getSortedPostsData } from "../lib/posts";
-import { getSortedProductsData } from "../lib/products";
 
 export async function getStaticProps() {
   const allPostsData = getSortedPostsData();
-  const allProductsData = getSortedProductsData();
+  const res = await fetch("https://fakestoreapi.com/products");
+  const allProductsData = await res.json();
   return {
     props: {
       allPostsData,
